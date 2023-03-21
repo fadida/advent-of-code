@@ -17,15 +17,14 @@
     elves-calories))
 
 (defun aoc-1-find-elf-with-max-cal (elves-calories)
-  "Get the elf number that carries the maximum calories number"
+  "Get the maximum number of calories carried by one elf."
   (loop for cals in elves-calories
         collect (loop for cal in cals
-                      summing cal) into elf-list
-        finally (return (loop for cal in elf-list
-                              maximize cal))))
+                      summing cal) into total-calories
+        finally (return (apply #'max total-calories))))
 
 (defun aoc-1-top3 (&rest elems)
-  "Returns the top 3 results form `ELEMS'."
+  "Return the top 3 results from ELEMS."
   (let ((sorted (sort elems #'>)))
     (list (first sorted) (second sorted) (third sorted))))
 
@@ -34,7 +33,7 @@
   (loop for cals in elves-calories
         collect (loop for cal in cals
                       summing cal) into elf-list
-        finally (return (apply #'+ (apply #'aoc-2-top3 elf-list)))))
+        finally (return (apply #'+ (apply #'aoc-1-top3 elf-list)))))
 
 (let ((elves-calories (aoc-1-read-input *aoc-1-input-file*)))
   ;; Solve AoC day 1 - Part 1
