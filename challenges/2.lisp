@@ -68,3 +68,39 @@ And the play score is 1 for rock, 2 for paper and 3 for scissors."
 ; Solve the problem - part 1
 (let ((playbook (aoc-2-read-input *aoc-2-input-file*)))
   (print (reduce #'+ (mapcar #'aoc-2-calc-turn-score playbook))))
+
+;;; Part 2
+
+(defun aoc-2-get-my-move (result opponent-move)
+  "Returns the move that satisfies the result against the opponent's move."
+  (let ((parsed-result (case result
+                  (#\X 'lose)
+                  (#\Y 'tie)
+                  (#\Z 'win))))
+    (case parsed-result
+      ('win (case opponent-move
+              ('rock 'paper)
+              ('paper 'scissors)
+              ('scissors 'rock)))
+      ('tie opponent-move)
+      ('lose (case opponent-move
+               ('rock 'scissors)
+               ('paper 'rock)
+               ('scissors 'paper))))))
+
+(defun aoc-2-read-input-2 (path)
+  "Reads the challenge input and return an association list with the rock-paper-scissors playbook.
+Each element of the a-list will look like this `(rock . paper)' where the car is the opponent's
+move and the cdr is the move that beats it."
+  (let (playbook '())
+    (with-open-file (in path)
+      (loop for line = (read-line in nil nil)
+            while line
+            do (let* ((opp (aoc-2-convert-to-symbol (aref line 0) #\A))
+                      (my (aoc-2-get-my-move (aref line 2) opp)))
+                 (push (cons opp my) playbook))))
+    playbook))
+
+; Solve the problem - part 2
+(let ((playbook (aoc-2-read-input-2 *aoc-2-input-file*)))
+  (print (reduce #'+ (mapcar #'aoc-2-calc-turn-score playbook))))
